@@ -70,3 +70,14 @@ user-select: none;
     align-items: center;
 }
 
+.mini-bean{
+    position: absolute;
+    width: 60px;
+    height: auto;
+    cursor: grab;
+    user-select: none;
+    z-index: 100;
+}
+.mini-bean:active{
+    cursor: grabbing;
+}
