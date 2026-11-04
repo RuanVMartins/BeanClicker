@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 240 300">
+  <defs>
+    <radialGradient id="skin" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#F6D6C6"/>
+      <stop offset="70%" stop-color="#E8B8A2"/>
+      <stop offset="100%" stop-color="#C98F7A"/>
+    </radialGradient>
+    <linearGradient id="earIn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2A7A0"/>
+      <stop offset="100%" stop-color="#E7B9A6"/>
+    </linearGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2E3140"/>
+      <stop offset="100%" stop-color="#16171F"/>
+    </linearGradient>
+    <linearGradient id="tie" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFB45E"/>
+      <stop offset="100%" stop-color="#E07A1F"/>
+    </linearGradient>
+    <radialGradient id="coin" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#FFF1A8"/>
+      <stop offset="60%" stop-color="#E0B840"/>
+      <stop offset="100%" stop-color="#8A6A1C"/>
+    </radialGradient>
+    <radialGradient id="iris" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#E9F59A"/>
+      <stop offset="100%" stop-color="#8DB83A"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rabo pelado -->
+  <path d="M182 288 C 222 280, 232 240, 214 214 C 206 204, 200 210, 206 220 C 218 240, 210 268, 178 276 Z"
+        fill="url(#skin)" stroke="#6B4434" stroke-width="2"/>
+
+  <!-- Paletó -->
+  <path d="M58 166 C 70 150, 96 142, 120 142 C 144 142, 170 150, 182 166 L 196 300 L 44 300 Z"
+        fill="url(#suit)" stroke="#0B0B10" stroke-width="2"/>
+  <!-- Risca de giz -->
+  <g stroke="#4A4E63" stroke-width="0.8" opacity="0.7">
+    <line x1="66" y1="175" x2="58" y2="298"/><line x1="76" y1="164" x2="70" y2="298"/>
+    <line x1="164" y1="164" x2="170" y2="298"/><line x1="174" y1="175" x2="182" y2="298"/>
+    <line x1="86" y1="200" x2="84" y2="298"/><line x1="154" y1="200" x2="156" y2="298"/>
+  </g>
+  <!-- Camisa -->
+  <path d="M100 146 L 140 146 L 120 214 Z" fill="#F4F1EA" stroke="#B8B2A6" stroke-width="1"/>
+  <!-- Gravata -->
+  <path d="M114 150 L 126 150 L 123 160 L 117 160 Z" fill="url(#tie)" stroke="#8A4A10" stroke-width="1"/>
+  <path d="M117 160 L 123 160 L 129 202 L 120 212 L 111 202 Z" fill="url(#tie)" stroke="#8A4A10" stroke-width="1"/>
+  <!-- Lapelas -->
+  <path d="M98 144 L 120 214 L 104 196 L 84 168 L 92 160 Z" fill="#232530" stroke="#0B0B10" stroke-width="1.5"/>
+  <path d="M142 144 L 120 214 L 136 196 L 156 168 L 148 160 Z" fill="#232530" stroke="#0B0B10" stroke-width="1.5"/>
+  <!-- Lenço de bolso dourado -->
+  <path d="M146 214 L 166 210 L 164 218 L 148 222 Z" fill="#E0B840" stroke="#8A6A1C" stroke-width="1"/>
+  <path d="M148 214 L 152 206 L 156 213 L 160 205 L 164 211 Z" fill="#FFE08A" stroke="#8A6A1C" stroke-width="0.8"/>
+  <!-- Botões -->
+  <circle cx="120" cy="236" r="3" fill="#0B0B10"/><circle cx="120" cy="256" r="3" fill="#0B0B10"/>
+
+  <!-- Braço esquerdo (relaxado) -->
+  <path d="M60 170 C 46 200, 44 236, 52 262 L 72 262 C 70 236, 74 206, 82 184 Z" fill="url(#suit)" stroke="#0B0B10" stroke-width="2"/>
+  <ellipse cx="62" cy="266" rx="13" ry="10" fill="url(#skin)" stroke="#6B4434" stroke-width="2"/>
+  <path d="M56 270 L 56 275 M62 271 L 62 276 M68 270 L 68 275" stroke="#6B4434" stroke-width="1.2"/>
+
+  <!-- Braço direito segurando a moeda -->
+  <path d="M178 170 C 196 186, 204 204, 196 222 L 176 226 C 182 210, 176 196, 160 186 Z" fill="url(#suit)" stroke="#0B0B10" stroke-width="2"/>
+  <circle cx="196" cy="214" r="18" fill="url(#coin)" stroke="#6B4E10" stroke-width="2"/>
+  <circle cx="196" cy="214" r="12" fill="none" stroke="#8A6A1C" stroke-width="1.5"/>
+  <text x="196" y="220" font-family="Arial Black, Arial" font-size="16" font-weight="900" text-anchor="middle" fill="#6B4E10">$</text>
+  <ellipse cx="184" cy="226" rx="12" ry="9" fill="url(#skin)" stroke="#6B4434" stroke-width="2"/>
+
+  <!-- Pescoço com dobras -->
+  <path d="M96 128 C 104 146, 136 146, 144 128 L 142 148 C 132 154, 108 154, 98 148 Z" fill="url(#skin)" stroke="#6B4434" stroke-width="2"/>
+  <path d="M104 140 C 114 146, 126 146, 136 140" fill="none" stroke="#A86E5C" stroke-width="1.3"/>
+
+  <!-- Orelhas gigantes -->
+  <path d="M76 76 C 60 50, 48 24, 44 6 C 66 14, 92 34, 104 56 Z" fill="url(#skin)" stroke="#6B4434" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M80 68 C 68 48, 58 30, 54 18 C 70 26, 88 40, 97 56 Z" fill="url(#earIn)"/>
+  <path d="M164 76 C 180 50, 192 24, 196 6 C 174 14, 148 34, 136 56 Z" fill="url(#skin)" stroke="#6B4434" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M160 68 C 172 48, 182 30, 186 18 C 170 26, 152 40, 143 56 Z" fill="url(#earIn)"/>
+
+  <!-- Cabeça (formato de cunha, maçãs do rosto marcadas) -->
+  <path d="M120 46 C 150 46, 172 64, 172 92 C 172 112, 160 126, 146 132 C 136 137, 128 140, 120 140 C 112 140, 104 137, 94 132 C 80 126, 68 112, 68 92 C 68 64, 90 46, 120 46 Z"
+        fill="url(#skin)" stroke="#6B4434" stroke-width="2.4"/>
+
+  <!-- Brilho da careca -->
+  <ellipse cx="106" cy="56" rx="14" ry="5" fill="#FFFFFF" opacity="0.45" transform="rotate(-12 106 56)"/>
+
+  <!-- Rugas da testa -->
+  <g fill="none" stroke="#A86E5C" stroke-width="1.6" stroke-linecap="round">
+    <path d="M100 60 C 110 56, 130 56, 140 60"/>
+    <path d="M96 68 C 108 63, 132 63, 144 68"/>
+    <path d="M104 75 C 112 72, 128 72, 136 75"/>
+    <path d="M78 104 C 82 110, 84 116, 82 122"/>
+    <path d="M162 104 C 158 110, 156 116, 158 122"/>
+  </g>
+
+  <!-- Olhos (limão, meio fechados = deboche) -->
+  <g>
+    <path d="M84 94 C 90 84, 108 82, 114 92 C 108 102, 90 104, 84 94 Z" fill="url(#iris)" stroke="#3A2A20" stroke-width="2"/>
+    <ellipse cx="99" cy="94" rx="2.6" ry="7" fill="#111"/>
+    <circle cx="103" cy="90" r="1.6" fill="#FFF"/>
+    <path d="M82 93 C 90 82, 108 80, 116 91 C 106 89, 92 89, 82 93 Z" fill="#DDA48E" stroke="#3A2A20" stroke-width="1.8"/>
+
+    <path d="M156 94 C 150 84, 132 82, 126 92 C 132 102, 150 104, 156 94 Z" fill="url(#iris)" stroke="#3A2A20" stroke-width="2"/>
+    <ellipse cx="141" cy="94" rx="2.6" ry="7" fill="#111"/>
+    <circle cx="145" cy="90" r="1.6" fill="#FFF"/>
+    <path d="M158 93 C 150 82, 132 80, 124 91 C 134 89, 148 89, 158 93 Z" fill="#DDA48E" stroke="#3A2A20" stroke-width="1.8"/>
+  </g>
+  <!-- Sobrancelha arqueada (vilão) -->
+  <path d="M126 80 C 136 74, 148 75, 156 80" fill="none" stroke="#7A4A3A" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Nariz e sorriso de canto -->
+  <path d="M114 110 L 126 110 L 120 117 Z" fill="#D9817A" stroke="#6B4434" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M120 117 L 120 121 C 116 126, 110 126, 106 122" fill="none" stroke="#6B4434" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M120 121 C 126 127, 134 125, 138 117" fill="none" stroke="#6B4434" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Bigodes curtos e ralos -->
+  <g stroke="#7A5A4A" stroke-width="1" stroke-linecap="round" opacity="0.8">
+    <path d="M100 116 L 80 112"/><path d="M100 120 L 82 122"/>
+    <path d="M140 116 L 160 112"/><path d="M140 120 L 158 122"/>
+  </g>
+</svg>

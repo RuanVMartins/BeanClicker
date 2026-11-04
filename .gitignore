@@ -1,0 +1,7 @@
+# Cache do Godot
+.godot/
+
+# Builds exportados
+*.exe
+*.pck
+*.zip

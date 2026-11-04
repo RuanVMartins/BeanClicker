@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://drrq0l2t3730d"]
+
+[ext_resource type="Script" uid="uid://b3g4yi1twkxdy" path="res://main.gd" id="1_main"]
+[ext_resource type="Texture2D" uid="uid://der6g0aiyhmgv" path="res://images/background.jpg" id="5_bg"]
+[ext_resource type="PackedScene" path="res://BetsMenu.tscn" id="6_bets_scene"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Background" type="TextureRect" parent="BackgroundLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MiniBeansContainer" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="CanvasLayer"]
+
+[node name="BuySound" type="AudioStreamPlayer" parent="CanvasLayer"]
+
+[node name="PrestigeSound" type="AudioStreamPlayer" parent="CanvasLayer"]
+
+[node name="CasinoLayer" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="BetsMenu" parent="CasinoLayer" instance=ExtResource("6_bets_scene")]
+
+[node name="ModalLayer" type="CanvasLayer" parent="."]
+layer = 10

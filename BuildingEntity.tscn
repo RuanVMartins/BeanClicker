@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://building_entity.gd" id="1_be"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_be"]
+size = Vector2(10, 10)
+
+[node name="BuildingEntity" type="Area2D"]
+scale = Vector2(0.25, 0.25)
+input_pickable = true
+script = ExtResource("1_be")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_be")
