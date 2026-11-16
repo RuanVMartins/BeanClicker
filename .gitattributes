@@ -1,0 +1,15 @@
+# Normaliza finais de linha (LF) para que máquinas Windows não gravem CRLF
+# nos arquivos de texto do projeto (scripts .gd, cenas .tscn, .md, .yml).
+* text=auto eol=lf
+
+# Arquivos binários: nunca converter
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.pdf binary
+*.ttf binary
+*.otf binary

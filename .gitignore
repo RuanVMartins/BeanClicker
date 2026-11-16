@@ -1,7 +1,24 @@
-# Cache do Godot
+# Cache e importações do Godot (regenerados ao abrir o projeto)
 .godot/
+.import/
 
-# Builds exportados
+# Builds exportados (vão para GitHub Releases, não para o repositório)
 *.exe
 *.pck
 *.zip
+builds/
+
+# Save local do jogo, caso seja copiado para a pasta
+beanclicker_save.json
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
