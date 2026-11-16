@@ -17,6 +17,7 @@ Versão 1.0 · baseado no modelo *PGC DevOps ONGConecta* (Prof. Camargo), adapta
 | Data | Versão | Descrição | Autor |
 | :--- | :---: | :--- | :--- |
 | 16/11/2026 | 1.0 | Elaboração do PGC e configuração inicial do repositório (Aula 1) | Ruan Vitor |
+| 16/11/2026 | 1.1 | Par de revisão confirmado (@xaibelucas com acesso Write) e registro do fluxo de revisão por PR (Issue #1) | Ruan Vitor |
 
 ---
 
@@ -52,6 +53,8 @@ Aplica-se a todos os integrantes da equipe e cobre: o projeto Godot (`game/`), a
 | Par de revisão | @xaibelucas | Revisa e aprova os PRs para a `main` (ninguém aprova o próprio PR). |
 | Desenvolvedores | Toda a equipe | Abrem Issues, trabalham em branches e enviam PRs. |
 | QA | Vitor Kill (com apoio de todos) | Testa manualmente os builds de `staging` antes da release. |
+
+**Fluxo de revisão:** o autor abre o PR para a `main` → o CODEOWNERS solicita a revisão de @xaibelucas automaticamente → o par revisa e aprova (ou pede alterações) → o autor faz o *squash merge*. Novos commits no PR descartam a aprovação anterior e exigem nova revisão.
 
 **Comunicação:** assíncrona, pelo grupo da equipe e pelos comentários dos PRs. Prazo de resposta a um PR: até 3 dias úteis.
 
