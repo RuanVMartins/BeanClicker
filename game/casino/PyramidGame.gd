@@ -22,6 +22,7 @@ var _result: Label
 var _level: int = 0
 var _bet: float = 0.0
 var _active: bool = false
+var _recruiting: bool = false   # evita recrutamento duplo durante a animação
 
 
 func game_id() -> String:
@@ -118,12 +119,14 @@ func _on_enter() -> void:
 
 
 func _on_recruit() -> void:
-	if not _active or _level >= LEVELS.size():
+	if not _active or _recruiting or _level >= LEVELS.size():
 		return
+	_recruiting = true
 	_recruit_btn.disabled = true
 	_cash_btn.disabled = true
 	menu.emit_sfx("click")
 	await wait(0.35)
+	_recruiting = false
 	if randf() < SUCCESS:
 		_level += 1
 		UIKit.pop(_rows[_level - 1], 1.1, 0.2)
@@ -149,7 +152,7 @@ func _on_recruit() -> void:
 
 
 func _on_cash() -> void:
-	if not _active or _level == 0:
+	if not _active or _recruiting or _level == 0:
 		return
 	var paid := settle(_bet, _bet * mult(_level))
 	show_result(_result, "Saiu antes do colapso no nível %d! +%s" % [_level, NumberFormatter.format_number(paid - _bet)], UIKit.PROFIT)
