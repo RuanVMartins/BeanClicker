@@ -366,8 +366,6 @@ func _update_hud_static() -> void:
 	if gm.offshore_bank > 0:
 		bits.append("%d Fundos livres" % gm.offshore_bank)
 	title_label.text = "  ·  ".join(bits).to_upper()
-	casino_action.disabled = not gm.bets_unlocked
-	casino_action.tooltip_text = "Sete jogos. Uma casa. Adivinha quem ganha." if gm.bets_unlocked else "Desbloqueie o cassino na loja (1.000 moedas)."
 	_update_hud_dynamic()
 
 
@@ -381,6 +379,17 @@ func _update_hud_dynamic() -> void:
 		change_label.text = ("%s %+.1f%%" % ["▲" if ch > 0.0 else "▼", ch * 100.0]).replace(".", ",")
 		change_label.add_theme_color_override("font_color", UIKit.PROFIT if ch > 0.0 else UIKit.RISK)
 	change_label.tooltip_text = "Variação do saldo no último minuto."
+	# Bug corrigido: o botão do cassino ficava travado até o desbloqueio
+	var gm := GameManager
+	if gm.bets_unlocked:
+		casino_action.disabled = false
+		casino_action.text = "♠ CASSINO"
+		casino_action.tooltip_text = "Sete jogos. Uma casa. Adivinha quem ganha."
+	else:
+		var cost := gm.BETS_UPGRADE_COST
+		casino_action.disabled = not gm.can_afford(cost)
+		casino_action.text = "♠ ABRIR (%s)" % NumberFormatter.format_number(cost)
+		casino_action.tooltip_text = "Desbloqueia o cassino por %s moedas." % NumberFormatter.format_number(cost)
 	if Meowzos.loan_active:
 		debt_chip.visible = true
 		debt_chip.text = "  DÍVIDA %s  •  vence em %s  " % [NumberFormatter.format_number(Meowzos.loan_debt), NumberFormatter.format_time(Meowzos.loan_time_left)]

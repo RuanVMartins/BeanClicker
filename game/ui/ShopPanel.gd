@@ -86,7 +86,8 @@ func _ready() -> void:
 	_set_buy_mode(1)
 
 	GameManager.upgrade_changed.connect(func(_i: int): _rebuild_upgrades())
-	GameManager.building_changed.connect(func(_i: int): refresh(true))
+	# Bug corrigido: comprar estrutura não revelava melhorias na 1ª carreira
+	GameManager.building_changed.connect(func(_i: int): _rebuild_upgrades(); refresh(true))
 	GameManager.buildings_reset.connect(func(): _rebuild_upgrades(); refresh(true))
 	GameManager.prestige_changed.connect(func(): _rebuild_upgrades(); refresh(true))
 	GameManager.perks_changed.connect(func(): refresh(true))
@@ -203,10 +204,16 @@ func refresh(full: bool) -> void:
 	var gm := GameManager
 	var coins := gm.coins
 	var shown_locked := false
+	var needs_full := false
+	_update_casino_button()   # Bug corrigido: antes só atualizava ao comprar algo
 	for i in range(_building_cards.size()):
 		var c: Dictionary = _building_cards[i]
 		var b: Dictionary = gm.buildings[i]
 		var revealed := _is_revealed(i)
+		# Revelou entre duas atualizações completas: força nome/ícone/tooltip novos
+		if c.get("revealed", revealed) != revealed and not full:
+			needs_full = true
+		c["revealed"] = revealed
 		var btn: Button = c["btn"]
 		# Mostra todas as reveladas + uma única silhueta misteriosa
 		btn.visible = revealed or not shown_locked
@@ -214,7 +221,7 @@ func refresh(full: bool) -> void:
 			shown_locked = true
 		var amount := _amount_for(i)
 		var price := gm.get_bulk_price(i, amount)
-		var affordable := coins >= price
+		var affordable := gm.can_afford(price)
 		btn.disabled = not affordable
 		(c["bar"] as ProgressBar).value = clampf(coins / maxf(price, 1.0), 0.0, 1.0)
 		(c["price"] as Label).text = "BNC " + NumberFormatter.format_number(price)
@@ -240,9 +247,9 @@ func refresh(full: bool) -> void:
 			(c["prod"] as Label).text = "Ativo confidencial"
 			btn.tooltip_text = "Continue explorando para descobrir este ativo."
 
-	if full:
-		_update_casino_button()
 	_refresh_upgrade_affordability()
+	if needs_full:
+		refresh(true)
 
 
 func _update_casino_button() -> void:
@@ -252,7 +259,7 @@ func _update_casino_button() -> void:
 		_casino_btn.tooltip_text = "Sete jogos de azar e um escritório de crédito. O que pode dar errado?"
 	else:
 		_casino_btn.text = "♠  Abrir Cassino Clandestino (%s)" % NumberFormatter.format_number(GameManager.BETS_UPGRADE_COST)
-		_casino_btn.disabled = GameManager.coins < GameManager.BETS_UPGRADE_COST
+		_casino_btn.disabled = not GameManager.can_afford(GameManager.BETS_UPGRADE_COST)
 		_casino_btn.tooltip_text = "Um gato sphynx de terno oferece 'oportunidades de investimento'."
 
 
@@ -294,10 +301,9 @@ func _rebuild_upgrades() -> void:
 
 
 func _refresh_upgrade_affordability() -> void:
-	var coins := GameManager.coins
 	for btn in _upgrade_buttons:
 		var idx: int = btn.get_meta("upgrade_index")
-		var ok := coins >= GameManager.get_upgrade_price(idx)
+		var ok := GameManager.can_afford(GameManager.get_upgrade_price(idx))
 		btn.disabled = not ok
 		btn.modulate = Color.WHITE if ok else Color(1, 1, 1, 0.45)
 

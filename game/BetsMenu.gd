@@ -335,7 +335,7 @@ func _update_bet_ui() -> void:
 	_slider.value = clampf(current_bet, 1.0, _slider.max_value)
 	_slider_lock = false
 	_bet_label.text = NumberFormatter.format_number(current_bet)
-	var affordable := coins >= current_bet
+	var affordable := GameManager.can_afford(current_bet)
 	_bet_label.add_theme_color_override("font_color", UIKit.GOLD_LIGHT if affordable else UIKit.RISK)
 	var pct := current_bet / maxf(coins, 1.0)
 	if not affordable:
@@ -374,7 +374,7 @@ func _on_chip(kind) -> void:
 ## Chamado pelos jogos. Debita e retorna o valor (0 se falhar).
 func request_bet(game: CasinoGame, amount: float = -1.0) -> float:
 	var bet: float = floorf(current_bet if amount < 0.0 else amount)
-	if bet < 1.0 or GameManager.coins < bet:
+	if bet < 1.0 or not GameManager.can_afford(bet):
 		Meowzos.say("Saldo insuficiente! Mas olha que coincidência: meu escritório de crédito está bem ali.", "smug")
 		UIKit.shake(_bet_label, 6.0)
 		UIKit.flash(_credit_btn, Color(1.6, 1.2, 0.6), 0.8)

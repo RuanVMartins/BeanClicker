@@ -186,10 +186,22 @@ func earn(amount: float) -> void:
 		unlock_achievement("earn_1b")
 
 
+## Tolerância para erro de ponto flutuante: a renda chega em frações de 0,1 s,
+## então 1000 moedas "na tela" podem ser 999,9999999 na memória.
+const AFFORD_EPSILON: float = 0.001
+
+
+## Fonte única de verdade para "dá pra pagar?" (UI e lógica usam a mesma regra).
+func can_afford(amount: float) -> bool:
+	return coins + AFFORD_EPSILON >= amount
+
+
 ## Gasto: falha se não houver saldo.
 func spend(amount: float) -> bool:
-	if amount <= 0.0 or coins + 0.0001 < amount:
+	if amount <= 0.0 or not can_afford(amount):
 		return false
+	if amount > coins:
+		amount = coins
 	coins -= amount
 	return true
 
@@ -234,10 +246,10 @@ func get_bulk_price(index: int, amount: int) -> float:
 func get_max_affordable(index: int) -> int:
 	var b: Dictionary = buildings[index]
 	var base: float = float(b["base_price"]) * pow(1.15, float(b["count"])) * _building_discount()
-	if coins < base:
+	if not can_afford(base):
 		return 0
-	var n: int = int(floor(log(coins * 0.15 / base + 1.0) / log(1.15)))
-	while n > 0 and get_bulk_price(index, n) > coins:
+	var n: int = maxi(1, int(floor(log(coins * 0.15 / base + 1.0) / log(1.15))))
+	while n > 0 and not can_afford(get_bulk_price(index, n)):
 		n -= 1
 	return n
 
@@ -266,6 +278,8 @@ func get_total_buildings() -> int:
 func buy_building(index: int, amount: int = 1) -> int:
 	var n: int = amount if amount > 0 else get_max_affordable(index)
 	if n <= 0:
+		return 0
+	if not can_afford(get_bulk_price(index, n)):
 		return 0
 	var price := get_bulk_price(index, n)
 	if not spend(price):
@@ -519,7 +533,7 @@ func _compute_offline_income() -> void:
 # ╚══════════════════════════════════════╝
 
 func can_afford_bets_upgrade() -> bool:
-	return coins >= BETS_UPGRADE_COST and not bets_unlocked
+	return can_afford(BETS_UPGRADE_COST) and not bets_unlocked
 
 
 func buy_bets_upgrade() -> bool:
@@ -533,7 +547,7 @@ func buy_bets_upgrade() -> bool:
 
 ## Debita uma aposta. Retorna false se não houver saldo.
 func place_bet(amount: float) -> bool:
-	amount = floor(amount)
+	amount = floorf(amount)
 	if amount < 1.0 or not spend(amount):
 		return false
 	bets_total_count += 1

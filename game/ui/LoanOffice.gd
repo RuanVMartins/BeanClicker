@@ -144,7 +144,7 @@ func _refresh() -> void:
 			NumberFormatter.format_percent(Meowzos.loan_rate),
 			NumberFormatter.format_time(Meowzos.loan_time_left)]
 		_debt_bar.value = Meowzos.loan_time_left / maxf(Meowzos.loan_term, 1.0)
-		_pay_all_btn.disabled = GameManager.coins < Meowzos.loan_debt
+		_pay_all_btn.disabled = not GameManager.can_afford(Meowzos.loan_debt)
 		_pay_all_btn.text = "QUITAR TUDO (%s)" % NumberFormatter.format_number(Meowzos.loan_debt)
 		_pay_half_btn.disabled = GameManager.coins < 1.0
 
