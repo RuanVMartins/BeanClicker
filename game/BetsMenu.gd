@@ -237,7 +237,14 @@ func _make_particles() -> CPUParticles2D:
 # ABRIR / FECHAR
 # ══════════════════════════════════════
 
+var _closing: bool = false
+var _move_tween: Tween
+
+
 func open() -> void:
+	_closing = false
+	if _move_tween and _move_tween.is_valid():
+		_move_tween.kill()
 	visible = true
 	var vp := get_viewport_rect().size
 	var size_target := Vector2(minf(1060.0, vp.x - 24.0), minf(620.0, vp.y - 16.0))
@@ -246,9 +253,9 @@ func open() -> void:
 	var target := Vector2((vp.x - size_target.x) * 0.5, (vp.y - size_target.y) * 0.5)
 	_panel.position = Vector2(target.x, -size_target.y - 40.0)
 	_overlay.modulate.a = 0.0
-	var tw := create_tween().set_parallel(true)
-	tw.tween_property(_overlay, "modulate:a", 1.0, 0.25)
-	tw.tween_property(_panel, "position:y", target.y, 0.6).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	_move_tween = create_tween().set_parallel(true)
+	_move_tween.tween_property(_overlay, "modulate:a", 1.0, 0.25)
+	_move_tween.tween_property(_panel, "position:y", target.y, 0.6).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 	_particles.position = Vector2(vp.x * 0.5, target.y - 10.0)
 	_particles.emission_rect_extents = Vector2(size_target.x * 0.45, 4)
@@ -265,12 +272,19 @@ func close() -> void:
 	if is_locked():
 		Meowzos.say("Calma! Ninguém sai no meio da rodada. Regra da casa. Eu que inventei.", "angry")
 		return
-	var tw := create_tween().set_parallel(true)
-	tw.tween_property(_panel, "position:y", -_panel.size.y - 60.0, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tw.tween_property(_overlay, "modulate:a", 0.0, 0.3)
-	tw.chain().tween_callback(func():
-		visible = false
-		menu_closed.emit())
+	if _closing:
+		return
+	_closing = true
+	if _move_tween and _move_tween.is_valid():
+		_move_tween.kill()
+	_move_tween = create_tween().set_parallel(true)
+	_move_tween.tween_property(_panel, "position:y", -_panel.size.y - 60.0, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	_move_tween.tween_property(_overlay, "modulate:a", 0.0, 0.3)
+	_move_tween.chain().tween_callback(func():
+		if _closing:
+			_closing = false
+			visible = false
+			menu_closed.emit())
 
 
 # ══════════════════════════════════════
@@ -335,7 +349,7 @@ func _update_bet_ui() -> void:
 	_slider.value = clampf(current_bet, 1.0, _slider.max_value)
 	_slider_lock = false
 	_bet_label.text = NumberFormatter.format_number(current_bet)
-	var affordable := coins >= current_bet
+	var affordable := GameManager.can_afford(current_bet)
 	_bet_label.add_theme_color_override("font_color", UIKit.GOLD_LIGHT if affordable else UIKit.RISK)
 	var pct := current_bet / maxf(coins, 1.0)
 	if not affordable:
@@ -374,7 +388,7 @@ func _on_chip(kind) -> void:
 ## Chamado pelos jogos. Debita e retorna o valor (0 se falhar).
 func request_bet(game: CasinoGame, amount: float = -1.0) -> float:
 	var bet: float = floorf(current_bet if amount < 0.0 else amount)
-	if bet < 1.0 or GameManager.coins < bet:
+	if bet < 1.0 or not GameManager.can_afford(bet):
 		Meowzos.say("Saldo insuficiente! Mas olha que coincidência: meu escritório de crédito está bem ali.", "smug")
 		UIKit.shake(_bet_label, 6.0)
 		UIKit.flash(_credit_btn, Color(1.6, 1.2, 0.6), 0.8)

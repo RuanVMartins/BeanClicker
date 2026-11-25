@@ -23,6 +23,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 GameManager="*res://GameManager.gd"
 NumberFormatter="*res://NumberFormatter.gd"
 Meowzos="*res://Meowzos.gd"
+Fishing="*res://Fishing.gd"
 
 [display]
 

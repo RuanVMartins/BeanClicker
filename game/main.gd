@@ -43,6 +43,9 @@ var casino_action: Button
 var loan_action: Button
 var prestige_action: Button
 var report_action: Button
+var fishing_action: Button
+var fishing_panel: FishingPanel
+var _last_coins: float = 0.0
 var _prestige_glow: Tween
 
 # Componentes
@@ -94,6 +97,7 @@ func _ready() -> void:
 	bets_menu.sfx_triggered.connect(_on_casino_sfx)
 
 	_displayed_coins = GameManager.coins
+	_last_coins = GameManager.coins
 	_sync_all_entities()
 	_update_hud_static()
 
@@ -109,6 +113,12 @@ func _process(delta: float) -> void:
 	if absf(_displayed_coins - target) < 1.0:
 		_displayed_coins = target
 	coins_label.text = NumberFormatter.format_number(_displayed_coins)
+	# Ganho grande de uma vez (venda de peixe, prêmio, empréstimo): o saldo pulsa
+	var jump := target - _last_coins
+	if jump > maxf(_last_coins * 0.05, GameManager.cps * 20.0) and jump > 50.0:
+		UIKit.pop(coins_label, 1.18, 0.3)
+		UIKit.flash(coins_label, Color(0.7, 1.6, 0.9), 0.5)
+	_last_coins = target
 
 	_hud_accum += delta
 	if _hud_accum >= 0.25:
@@ -119,8 +129,24 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and not _any_modal_open() and not bets_menu.visible:
+		match event.keycode:
+			KEY_C:
+				# Atalho só abre; desbloquear (gastar 1.000) exige clicar no botão
+				if GameManager.bets_unlocked:
+					_open_casino()
+				else:
+					UIKit.flash(casino_action, Color(1.6, 1.3, 0.7), 0.5)
+			KEY_P:
+				_open_fishing()
+			KEY_E:
+				loan_office.open()
+			KEY_F:
+				prestige_screen.open()
+			KEY_R:
+				achievements_panel.open()
 	if event.is_action_pressed("ui_cancel"):
-		for screen in [prestige_screen, loan_office, achievements_panel]:
+		for screen in [fishing_panel, prestige_screen, loan_office, achievements_panel]:
 			if screen.is_open():
 				screen.close_screen()
 				return
@@ -256,13 +282,20 @@ func _build_play_area() -> void:
 	play_area.add_child(bar)
 	casino_action = _action_button("♠ CASSINO", "gold", bar)
 	casino_action.pressed.connect(_open_casino)
+	fishing_action = _action_button("≈ PESCA", "ghost", bar)
+	fishing_action.add_theme_color_override("font_color", UIKit.CYAN)
+	fishing_action.tooltip_text = "Pesque-Pague do Jeff: pesque peixes que valem mais quanto mais rico você fica.  [P]"
+	fishing_action.pressed.connect(_open_fishing)
 	loan_action = _action_button("$ CRÉDITO", "ghost", bar)
 	loan_action.add_theme_color_override("font_color", UIKit.ORANGE)
 	loan_action.pressed.connect(func(): loan_office.open())
+	loan_action.tooltip_text = "Escritório de crédito do Jeff Meowzos.  [E]"
 	prestige_action = _action_button("▼ FALÊNCIA", "danger", bar)
 	prestige_action.pressed.connect(func(): prestige_screen.open())
+	prestige_action.tooltip_text = "Declare falência, ganhe Fundos Offshore e volte mais forte.  [F]"
 	report_action = _action_button("★ RELATÓRIO", "purple", bar)
 	report_action.pressed.connect(func(): achievements_panel.open())
+	report_action.tooltip_text = "Conquistas e estatísticas.  [R]"
 
 	# ── Jeff Meowzos ambulante ──
 	meowzos_popup = UIKit.panel(UIKit.shadowed(UIKit.box(Color(0.07, 0.05, 0.1, 0.94), UIKit.ORANGE, 12, 2, 8), 12, 0.6))
@@ -298,7 +331,7 @@ func _build_play_area() -> void:
 
 ## Botões da barra: teclas inclinadas, como bilhetes de aposta.
 func _action_button(text: String, kind: String, parent: Control) -> Button:
-	var b := UIKit.button(text, kind, 14, Vector2(0, 46))
+	var b := UIKit.button(text, kind, 13, Vector2(0, 46))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	UIKit.skew_button(b, 0.16)
 	parent.add_child(b)
@@ -325,6 +358,10 @@ func _build_modals() -> void:
 	modal_layer.add_child(loan_office)
 	achievements_panel = AchievementsPanel.new()
 	modal_layer.add_child(achievements_panel)
+	fishing_panel = FishingPanel.new()
+	modal_layer.add_child(fishing_panel)
+	fishing_panel.sfx.connect(_on_casino_sfx)
+	Fishing.changed.connect(_update_hud_dynamic)
 
 
 func _setup_audio() -> void:
@@ -366,8 +403,6 @@ func _update_hud_static() -> void:
 	if gm.offshore_bank > 0:
 		bits.append("%d Fundos livres" % gm.offshore_bank)
 	title_label.text = "  ·  ".join(bits).to_upper()
-	casino_action.disabled = not gm.bets_unlocked
-	casino_action.tooltip_text = "Sete jogos. Uma casa. Adivinha quem ganha." if gm.bets_unlocked else "Desbloqueie o cassino na loja (1.000 moedas)."
 	_update_hud_dynamic()
 
 
@@ -381,6 +416,19 @@ func _update_hud_dynamic() -> void:
 		change_label.text = ("%s %+.1f%%" % ["▲" if ch > 0.0 else "▼", ch * 100.0]).replace(".", ",")
 		change_label.add_theme_color_override("font_color", UIKit.PROFIT if ch > 0.0 else UIKit.RISK)
 	change_label.tooltip_text = "Variação do saldo no último minuto."
+	# Bug corrigido: o botão do cassino ficava travado até o desbloqueio
+	var gm := GameManager
+	if gm.bets_unlocked:
+		casino_action.disabled = false
+		casino_action.text = "♠ CASSINO"
+		casino_action.tooltip_text = "Sete jogos. Uma casa. Adivinha quem ganha.  [C]"
+	else:
+		var cost := gm.BETS_UPGRADE_COST
+		casino_action.disabled = not gm.can_afford(cost)
+		casino_action.text = "♠ ABRIR (%s)" % NumberFormatter.format_number(cost)
+		casino_action.tooltip_text = "Desbloqueia o cassino por %s moedas.  [C]" % NumberFormatter.format_number(cost)
+	if fishing_action:
+		fishing_action.text = "≈ PESCA (CHEIA)" if Fishing.cooler_full() else ("≈ PESCA (%d)" % Fishing.cooler.size() if not Fishing.cooler.is_empty() else "≈ PESCA")
 	if Meowzos.loan_active:
 		debt_chip.visible = true
 		debt_chip.text = "  DÍVIDA %s  •  vence em %s  " % [NumberFormatter.format_number(Meowzos.loan_debt), NumberFormatter.format_time(Meowzos.loan_time_left)]
@@ -418,8 +466,14 @@ func _on_bean_clicked() -> void:
 	tw.tween_property(bean_button, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 	var mouse := ui.get_local_mouse_position()
-	UIKit.float_text(ui, "+" + NumberFormatter.format_number(value), mouse + Vector2(randf_range(-20, 20), -20))
-	_coin_burst(mouse, 3)
+	if GameManager.last_click_exec:
+		UIKit.float_text(ui, "EXECUTIVO! +" + NumberFormatter.format_number(value), mouse + Vector2(0, -30), UIKit.ORANGE, 30, 110.0, 1.2)
+		_coin_burst(mouse, 10)
+		UIKit.flash(bean_button, Color(1.6, 1.3, 0.7), 0.35)
+		_play(buy_sound, 1.5)
+	else:
+		UIKit.float_text(ui, "+" + NumberFormatter.format_number(value), mouse + Vector2(randf_range(-20, 20), -20))
+		_coin_burst(mouse, 3)
 
 
 ## Moedinhas que espirram do clique.
@@ -452,6 +506,11 @@ func _open_casino() -> void:
 			return
 	_hide_meowzos_popup()
 	bets_menu.open()
+
+
+func _open_fishing() -> void:
+	_hide_meowzos_popup()
+	fishing_panel.open()
 
 
 func _on_prestige_changed() -> void:
@@ -540,7 +599,7 @@ func _tick_meowzos(delta: float) -> void:
 
 func _on_meowzos_said(text: String, mood: String) -> void:
 	# Dentro do cassino ou do escritório, ele já tem palco próprio
-	if bets_menu.visible or loan_office.is_open():
+	if bets_menu.visible or loan_office.is_open() or (fishing_panel and fishing_panel.is_open()):
 		return
 	_show_meowzos_popup(text, mood)
 
@@ -567,7 +626,9 @@ func _hide_meowzos_popup() -> void:
 
 
 func _any_modal_open() -> bool:
-	return prestige_screen.is_open() or loan_office.is_open() or achievements_panel.is_open()
+	if fishing_panel == null:
+		return false
+	return prestige_screen.is_open() or loan_office.is_open() or achievements_panel.is_open() or fishing_panel.is_open()
 
 
 # ╔══════════════════════════════════════╗

@@ -11,10 +11,11 @@ const SUFFIXES: Array[String] = [
 func format_number(n: float) -> String:
 	if n < 0.0:
 		return "-" + format_number(-n)
+	n = floor(n + 0.001)
 	if n < 1000.0:
-		return str(int(floor(n)))
+		return str(int(n))
 	if n < 1_000_000.0:
-		return _thousands(int(floor(n)))
+		return _thousands(int(n))
 
 	var magnitude := 0
 	var display := n

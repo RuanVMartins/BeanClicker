@@ -1,5 +1,5 @@
 # 🐾 GAME DESIGN DOCUMENT (GDD) — BEANCLICKER
-**Versão do Documento:** 3.0 (Cassino do Jeff Meowzos & Falência Declarada)
+**Versão do Documento:** 3.1 (Cassino do Jeff Meowzos, Falência Declarada & Pesque-Pague)
 **Engine:** Godot Engine 4.7 (GDScript 2.0)
 **Gênero:** *Incremental Clicker* / Simulação Econômica Satírica com Mini-Jogos de Apostas
 **Plataforma:** PC / Desktop (Windows, macOS, Linux)
@@ -14,7 +14,7 @@
 | Atributo | Detalhes |
 | :--- | :--- |
 | **Título Oficial** | **BeanClicker** |
-| **Versão** | **2.0** (executável) / GDD 3.0 |
+| **Versão** | **2.1** (executável) / GDD 3.1 |
 | **Equipe** | **Abner, Athos, Lucas Scheibe, Raoni, Ruan Vitor, Vitor Kill** |
 | **Gênero** | Idle / Incremental Clicker com Mini-Jogos de Cassino |
 | **Motor de Jogo** | Godot Engine 4.7 (Forward Plus / GDScript 2.0) |
@@ -100,15 +100,18 @@ flowchart LR
     C --> D["Renda Passiva"]
     D --> E["Cassino / Empréstimos"]
     E --> C
+    A --> H["Pesque-Pague"]
+    H --> B
     D --> F["Falência Declarada"]
     F --> G["Fundos Offshore & Benefícios de CEO"]
     G --> A
 ```
 
-1. **Clique:** cada clique produz `poder de clique` + `% do CPS` (melhorias Toque de Midas, Mouse de Ouro, Dedo do CEO).
+1. **Clique:** cada clique produz `poder de clique` + `% do CPS` (melhorias Toque de Midas, Mouse de Ouro, Dedo do CEO). 4% dos cliques são **Cliques Executivos** e valem x8.
 2. **Renda passiva:** acumulada a 10 Hz pelo `GameManager`.
 3. **Cassino e crédito:** aceleram ou destroem o caixa. Não contam para a Falência.
-4. **Falência:** reinicia a carreira em troca de multiplicadores permanentes.
+4. **Pescaria:** jogo ativo que rende em proporção à sua renda. Conta como renda produtiva.
+5. **Falência:** reinicia a carreira em troca de multiplicadores permanentes.
 
 ---
 
@@ -218,20 +221,72 @@ O valor emprestado é medido em **minutos de renda** (CPS × 60, mínimo 200/min
 
 ---
 
-## 11. SISTEMAS DE APOIO
+## 11. PESQUE-PAGUE DO JEFF (PESCARIA)
 
-* **Renda offline:** 25% da produção do período ausente (até 2 h), ou 75% até 8 h com Paraíso Fiscal. Relatório de ausência com a "taxa de administração" do Meowzos.
-* **Save:** JSON versionado (v3), autosave a cada 30 s e ao fechar, migração automática de saves v2 (Grãos Celestiais viram Fundos Offshore).
-* **Conquistas:** 29, cada uma +1% de produção. Exemplos: *Nome Sujo no SPC Felino*, *Zebra na Pista*, *Imposto do Otimismo*, *Tudo ou Nada (Nada)*.
-* **Entidades visuais:** até 12 bonecos por estrutura (60 no total), arrastáveis, com animação própria; somem com um "puf" quando penhorados.
-* **Atalhos:** ESC fecha a janela aberta.
+O lago é do Jeff Meowzos, a vara é sua e o atravessador também é ele. Abre pelo botão **≈ PESCA** ou pela tecla **P**.
+
+### 11.1. Loop
+1. **Lançar a linha** (ESPAÇO ou botão). A boia cai no lago.
+2. **Esperar a fisgada** (1,4 a 4 s). Puxar antes da hora espanta o peixe: "O peixe riu da sua cara e mudou de lago."
+3. **Puxar** dentro da janela de fisgada (~0,95 s, maior com varas melhores). Se demorar, o peixe "foi trabalhar numa concorrente".
+4. **Barra de tensão:** um marcador vai e volta; é preciso clicar quando ele estiver na zona colorida. Errar arrebenta a linha ("material terceirizado").
+5. O peixe vai para a **cesta** (10 vagas). Com a cesta cheia, não dá para pescar até vender: isso impede a pesca no automático.
+6. **Vender** quando a **Cotação do Pescado** estiver boa. O Jeff fica com 10% de "atravessador".
+
+### 11.2. Raridades
+| Raridade | Chance base | Valor (segundos de renda) | Acertos na barra | Zona | Peixes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| Comum | 70% | 8 s | 1 | 30% | Sardinha CLT, Lambari Estagiário, Tilápia Terceirizada, Bagre do Home Office |
+| Raro | 22% | 45 s | 1 | 22% | Robalo Gerente Médio, Truta Coach Quântica, Pacu Pejotizado |
+| Épico | 6,5% | 180 s | 2 | 16% | Salmão Unicórnio, Atum Influencer, Peixe-Espada de Fusões |
+| Corporativo | 1,5% | 720 s | 3 | 12% | Tubarão de Wall Street, Baleia Bilionária, Peixe-Grande do Lobby |
+
+O marcador fica mais rápido quanto mais raro o peixe e acelera 12% a cada acerto. Peixes maiores (em kg) valem até 1,6x; menores, a partir de 0,65x.
+
+### 11.3. Escalonamento por fortuna
+**Valor = Renda/s × Segundos da raridade × Tamanho × Cotação do Pescado × 0,9** (10% do atravessador)
+
+* A renda de referência é o CPS (ou 2x o valor do clique no começo do jogo, quando ainda não há CPS). Assim, o mesmo peixe vale 15 moedas na primeira hora e bilhões no fim do jogo.
+* O valor é calculado **na hora da venda**: peixe guardado acompanha o seu crescimento.
+* A **Cotação do Pescado** oscila entre ~0,63x e ~1,37x (duas ondas de 97 s e 31 s) e aparece com sparkline, como uma ação.
+* **Balanceamento:** a média é de ~38 s de renda por peixe, e pescar sem parar rende ~3x o CPS. É bônus de jogo ativo, comparável a clicar, sem substituir a produção.
+* Vender peixe conta como **renda produtiva**, ou seja, ajuda a chegar na Falência. Ao falir, a cesta vai junto com a empresa, mas a vara fica (é pessoa física).
+
+### 11.4. Varas
+| Vara | Preço | Sorte | Zona extra | Janela extra |
+| :--- | :---: | :---: | :---: | :---: |
+| Vara de Bambu do Estagiário | — | x1,0 | — | — |
+| Vara de Fibra Terceirizada | 15 mil | x1,4 | +15% | +0,15 s |
+| Vara de Carbono Corporativa | 2,5 Mi | x2,0 | +30% | +0,30 s |
+| Vara Offshore com Sonar | 750 Mi | x3,0 | +45% | +0,45 s |
+
+A "sorte" multiplica o peso das raridades acima de Comum.
+
+### 11.5. Humor
+O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. O Jeff comenta cada fisgada, fuga e venda: "Fiquei com 10% de atravessador. Não fiz nada, por isso cobro." Os peixes têm descrições como "Pacu Pejotizado: tem CNPJ, não tem férias."
 
 ---
 
-## 12. REGISTROS VISUAIS
+## 12. SISTEMAS DE APOIO
+
+* **Renda offline:** 25% da produção do período ausente (até 2 h), ou 75% até 8 h com Paraíso Fiscal. Relatório de ausência com a "taxa de administração" do Meowzos.
+* **Save:** JSON versionado (v3), autosave a cada 30 s e ao fechar, migração automática de saves v2 (Grãos Celestiais viram Fundos Offshore).
+* **Conquistas:** 33, cada uma +1% de produção. Exemplos: *Nome Sujo no SPC Felino*, *Zebra na Pista*, *Imposto do Otimismo*, *Tudo ou Nada (Nada)*, *Peixe Grande*, *Atravessador*, *Clique Executivo*.
+* **Entidades visuais:** até 12 bonecos por estrutura (60 no total), arrastáveis, com animação própria; somem com um "puf" quando penhorados.
+* **Atalhos:** C = cassino, P = pescaria, E = crédito, F = falência, R = relatório, ESPAÇO = ação da pescaria, ESC = fecha a janela aberta.
+* **Feedback:** o saldo pulsa em ganhos grandes, cards da loja brilham quando ficam compráveis e melhorias novas piscam ao serem liberadas.
+
+### 12.1. Correções da versão 2.1
+* **Cassino travado com 1.000 moedas:** o botão de desbloqueio só reavaliava o saldo ao comprar algo, e o botão da barra ficava sempre desativado. Agora os dois atualizam em tempo real, e toda checagem de saldo passa por `GameManager.can_afford()`, com tolerância a erro de ponto flutuante (999,9999 na memória conta como 1.000).
+* **Melhorias só depois da primeira Falência:** comprar estruturas não reconstruía a vitrine de melhorias. Agora elas aparecem assim que a estrutura exigida é comprada, já na primeira carreira.
+* Cards de estrutura revelados entre atualizações ficavam com "???" até a próxima compra; corrigido.
+
+---
+
+## 13. REGISTROS VISUAIS
 
 ![Tela principal](screenshots/screenshot_main.png)
-*Figura 1 — Tela principal: HUD com saldo animado, Grande Bean, estruturas no cenário, Jeff Meowzos ambulante, Jornal do Capital, barra de ações e Mercado de Ativos.*
+*Figura 1 — Tela principal: HUD de cotação, Grande Bean, estruturas no cenário, Jeff Meowzos ambulante, Jornal do Capital, barra de ações (com Pescaria) e Mercado de Ativos.*
 
 ![Caça-Níquel](screenshots/screenshot_casino_slot.png)
 *Figura 2 — Cassino do Jeff Meowzos, Caça-Níquel: jackpot de 3 Fábricas pagando 90x, com chuva de moedas.*
@@ -257,14 +312,18 @@ O valor emprestado é medido em **minutos de renda** (CPS × 60, mínimo 200/min
 ![Falência Declarada](screenshots/screenshot_falencia.png)
 *Figura 9 — Falência Declarada: pedido de falência e Benefícios Executivos.*
 
+![Pesque-Pague do Jeff](screenshots/screenshot_pescaria.png)
+*Figura 10 — Pesque-Pague do Jeff: peixe Épico na barra de tensão, cesta com peixes de todas as raridades e a Cotação do Pescado.*
+
 ---
 
-## 13. ARQUITETURA DE SOFTWARE
+## 14. ARQUITETURA DE SOFTWARE
 
 | Arquivo | Tipo | Responsabilidade |
 | :--- | :--- | :--- |
 | `GameManager.gd` | Autoload | Economia: moedas, estruturas, melhorias, Falência, benefícios, cassino, offline, autosave |
 | `Meowzos.gd` | Autoload | Empréstimos e falas contextuais do Jeff Meowzos (sinal `said`) |
+| `Fishing.gd` | Autoload | Pescaria: raridades, varas, cesta, cotação do pescado, valor escalado pela renda |
 | `NumberFormatter.gd` | Autoload | Números no padrão brasileiro (1.234 / 1,23 Mi / Bi / Tri) |
 | `SaveSystem.gd` | Utilitário | Save JSON v3 com migração do v2 |
 | `data/GameData.gd` | Dados | Todos os números de balanceamento, textos, conquistas e manchetes |
@@ -273,6 +332,8 @@ O valor emprestado é medido em **minutos de renda** (CPS × 60, mínimo 200/min
 | `ui/PrestigeScreen.gd` | `Control` | Falência Declarada e Benefícios Executivos |
 | `ui/LoanOffice.gd` | `Control` | Escritório de Crédito |
 | `ui/AchievementsPanel.gd` | `Control` | Conquistas e "Relatório aos Acionistas" |
+| `ui/FishingPanel.gd` | `Control` | Interface da pescaria: lago desenhado em código, barra de tensão, cesta e varas |
+| `ui/Sparkline.gd`, `ui/Marquee.gd` | `Control` | Gráfico de cotação e letreiro de lâmpadas |
 | `ui/NewsTicker.gd`, `ui/MeowzosBubble.gd` | `Control` | Jornal do Capital e balão do Meowzos |
 | `Main.tscn` / `main.gd` | `Node2D` | Apresentação: HUD, Grande Bean, entidades, toasts |
 | `BetsMenu.tscn` / `BetsMenu.gd` | `Control` | Moldura do cassino |
@@ -281,9 +342,9 @@ O valor emprestado é medido em **minutos de renda** (CPS × 60, mínimo 200/min
 
 ---
 
-## 14. EQUIPE & CONSIDERAÇÕES EXTENSIONISTAS
+## 15. EQUIPE & CONSIDERAÇÕES EXTENSIONISTAS
 
-### 14.1. Integrantes
+### 15.1. Integrantes
 | Integrante | Atuação |
 | :--- | :--- |
 | **Abner** | Game Design, Balanceamento Numérico e Estruturas de Produção |
@@ -293,8 +354,8 @@ O valor emprestado é medido em **minutos de renda** (CPS × 60, mínimo 200/min
 | **Ruan Vitor** | Arte Digital, Sprites, Animações de Tween e Partículas |
 | **Vitor Kill** | Áudio/SFX, Documentação Técnica (GDD) e QA |
 
-### 14.2. Impacto Extensionista (PAC)
+### 15.2. Impacto Extensionista (PAC)
 *BeanClicker* contrasta a progressão estável da renda passiva com a volatilidade dos jogos de azar e com o custo real do crédito fácil. O jogo mostra abertamente o RTP de cada jogo, o RTP pessoal do jogador e quanto um empréstimo custa no fim do prazo. O humor torna visíveis mecanismos reais da indústria de apostas: o near-miss da raspadinha, o "reforço intermitente" das vitórias pequenas e a falácia do apostador.
 
 ---
-*Documento atualizado para a versão 2.0 do BeanClicker.*
+*Documento atualizado para a versão 2.1 do BeanClicker.*

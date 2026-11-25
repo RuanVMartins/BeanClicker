@@ -171,7 +171,7 @@ func _set_round_buttons(active: bool) -> void:
 	_deal_btn.disabled = active
 	_hit_btn.disabled = not active
 	_stand_btn.disabled = not active
-	_double_btn.disabled = not active or _player.size() != 2 or GameManager.coins < _bet
+	_double_btn.disabled = not active or _player.size() != 2 or not GameManager.can_afford(_bet)
 
 
 func _on_deal() -> void:
