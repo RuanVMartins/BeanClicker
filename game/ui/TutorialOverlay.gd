@@ -17,6 +17,7 @@ var _steps: Array[Dictionary] = []
 var _card: PanelContainer
 var _bubble: MeowzosBubble
 var _progress_label: Label
+var _hint_label: Label
 var _ok_btn: Button
 var _skip_btn: Button
 var _target: Control
@@ -55,6 +56,7 @@ func _build_steps() -> void:
 			"id": "buy_mini", "mood": "smug",
 			"text": "Agora contrate um Mini Bean na loja. Estagiário clonado: trabalha 24 horas e não pede nada.",
 			"target": func(): return main.shop.get_building_button(0),
+			"price": func(): return gm.get_building_price(0),
 			"done": func(): return int(gm.buildings[0]["count"]) >= 1,
 		},
 		{
@@ -62,6 +64,7 @@ func _build_steps() -> void:
 			"text": "Melhorias liberadas! Compre uma: elas multiplicam a produção. Ética não multiplica nada, já testei.",
 			"gate": func(): return main.shop.has_visible_upgrades(),
 			"target": func(): return main.shop.get_upgrade_grid(),
+			"price": func(): return _cheapest_upgrade_price(),
 			"done": func(): return gm.upgrades.any(func(u): return u["purchased"]),
 		},
 		{
@@ -73,6 +76,7 @@ func _build_steps() -> void:
 			"id": "buy_farmer", "mood": "neutral",
 			"text": "Compre um Fazendeiro Felino. Quanto mais caro o ativo, mais ele rende. É a lógica do mercado: quem tem, ganha.",
 			"target": func(): return main.shop.get_building_button(1),
+			"price": func(): return gm.get_building_price(1),
 			"done": func(): return int(gm.buildings[1]["count"]) >= 1,
 		},
 		{
@@ -131,6 +135,12 @@ func _build_card() -> void:
 	_bubble = MeowzosBubble.new(Vector2(70, 88), 13, false)
 	v.add_child(_bubble)
 
+	# Dica de dinheiro nos passos de compra: sem ela o botão destacado fica
+	# desativado e parece que o jogo travou.
+	_hint_label = UIKit.wrap_label("", 13, UIKit.AMBER)
+	_hint_label.visible = false
+	v.add_child(_hint_label)
+
 	var row := UIKit.hbox(8)
 	v.add_child(row)
 	_skip_btn = UIKit.button("Pular integração", "ghost", 11, Vector2(0, 30))
@@ -141,6 +151,16 @@ func _build_card() -> void:
 	_ok_btn = UIKit.button("ENTENDI", "gold", 13, Vector2(120, 32))
 	_ok_btn.pressed.connect(_on_ok)
 	row.add_child(_ok_btn)
+	# Em janelas menores o cartão cobre parte do Grande Bean: ele deixa o
+	# clique passar e só os próprios botões o capturam.
+	_let_clicks_through(_card)
+
+
+func _let_clicks_through(node: Node) -> void:
+	if node is Control and not node is BaseButton:
+		(node as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for c in node.get_children():
+		_let_clicks_through(c)
 
 
 # ══════════════════════════════════════
@@ -185,17 +205,41 @@ func _evaluate() -> void:
 	if show and step.has("counter"):
 		_progress_label.text = "Passo %d/%d · %s" % [GameManager.tutorial_step + 1, _steps.size(), step["counter"].call()]
 	_target = step["target"].call() if show else null
+	# Passo de compra sem dinheiro: aponta para o Bean e diz quanto falta
+	_hint_label.visible = false
+	if show and step.has("price"):
+		var price: float = float(step["price"].call())
+		if price > 0.0 and not GameManager.can_afford(price):
+			_hint_label.text = "Você tem %s de %s moedas. Clique no Grande Bean para juntar o resto." % [
+				NumberFormatter.format_number(floorf(GameManager.coins)), NumberFormatter.format_number(price)]
+			_target = main.bean_button
+		else:
+			_hint_label.text = "Já dá! Clique no item destacado na loja."
+		_hint_label.visible = true
 
 
 func _present(step: Dictionary) -> void:
 	_shown_step = GameManager.tutorial_step
 	_progress_label.text = "Passo %d/%d" % [GameManager.tutorial_step + 1, _steps.size()]
 	_ok_btn.visible = step.get("info", false)
+	# Compra do tutorial é sempre de 1 unidade (x10/x100 deixaria o preço fora de alcance)
+	if step.has("price") and main.shop.buy_mode != 1:
+		main.shop._set_buy_mode(1)
 	_card.visible = true
 	_card.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(_card, "modulate:a", 1.0, 0.25)
 	_bubble.speak(step["text"], step.get("mood", "neutral"))
+
+
+func _cheapest_upgrade_price() -> float:
+	var best: float = -1.0
+	for i in range(GameManager.upgrades.size()):
+		if GameManager.is_upgrade_visible(i):
+			var p: float = GameManager.get_upgrade_price(i)
+			if best < 0.0 or p < best:
+				best = p
+	return best
 
 
 func _on_ok() -> void:
