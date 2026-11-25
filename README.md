@@ -18,6 +18,7 @@ BeanClicker/
 │   ├── Main.tscn, main.gd # cena principal (HUD, Grande Bean, toasts)
 │   ├── GameManager.gd     # autoload: economia, Falência, cassino, autosave
 │   ├── Meowzos.gd         # autoload: empréstimos e falas do Jeff Meowzos
+│   ├── Fishing.gd         # autoload: pescaria (raridades, varas, cesta, cotação)
 │   ├── SaveSystem.gd      # save JSON versionado (v3)
 │   ├── casino/            # um script por mini-jogo (herdam CasinoGame)
 │   ├── data/              # GameData.gd: números de balanceamento e textos

@@ -21,6 +21,8 @@ var _mode_buttons: Array[Button] = []
 var _casino_btn: Button
 var _texture_cache: Dictionary = {}
 var _refresh_accum: float = 0.0
+var _was_affordable: Array[bool] = []
+var _last_upgrade_count: int = -1
 
 
 func _ready() -> void:
@@ -223,6 +225,12 @@ func refresh(full: bool) -> void:
 		var price := gm.get_bulk_price(i, amount)
 		var affordable := gm.can_afford(price)
 		btn.disabled = not affordable
+		# Acabou de ficar comprável: um brilho rápido chama o olho para o card
+		if _was_affordable.size() <= i:
+			_was_affordable.append(affordable)
+		elif affordable and not _was_affordable[i] and revealed:
+			UIKit.flash(btn, Color(1.35, 1.25, 0.85), 0.6)
+		_was_affordable[i] = affordable
 		(c["bar"] as ProgressBar).value = clampf(coins / maxf(price, 1.0), 0.0, 1.0)
 		(c["price"] as Label).text = "BNC " + NumberFormatter.format_number(price)
 		(c["price"] as Label).add_theme_color_override("font_color", UIKit.AMBER if affordable else Color(0.85, 0.42, 0.38))
@@ -297,6 +305,13 @@ func _rebuild_upgrades() -> void:
 		_upgrade_grid.add_child(btn)
 		_upgrade_buttons.append(btn)
 	_upgrade_header.text = ("MELHORIAS · %d DISPONÍVEIS" % _upgrade_buttons.size()) if any else "MELHORIAS · COMPRE ESTRUTURAS PARA LIBERAR"
+	# Melhoria nova liberada: o cabeçalho e o ícone novo piscam
+	if _last_upgrade_count >= 0 and _upgrade_buttons.size() > _last_upgrade_count:
+		UIKit.flash(_upgrade_header, Color(2.0, 2.0, 1.2), 0.9)
+		for b in _upgrade_buttons:
+			b.pivot_offset = Vector2(22, 22)
+			UIKit.pop(b, 1.15, 0.3)
+	_last_upgrade_count = _upgrade_buttons.size()
 	_refresh_upgrade_affordability()
 
 

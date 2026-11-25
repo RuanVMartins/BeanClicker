@@ -101,6 +101,8 @@ func _refresh() -> void:
 		["Resultado no cassino", ("+" if gm.bets_net_result >= 0.0 else "") + NumberFormatter.format_number(gm.bets_net_result)],
 		["Maior prêmio", NumberFormatter.format_number(gm.bets_highest_win)],
 		["Empréstimos / calotes", "%d / %d" % [Meowzos.loans_taken, Meowzos.loans_defaulted]],
+		["Peixes pescados / vendidos", "%d / %d" % [Fishing.total_caught, Fishing.total_sold]],
+		["Peixes corporativos", str(Fishing.legendary_caught)],
 		["Tempo de jogo", NumberFormatter.format_time(gm.play_time)],
 	]
 	for r in rows:

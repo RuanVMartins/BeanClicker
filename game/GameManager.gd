@@ -215,8 +215,19 @@ func get_coins() -> float:
 	return coins
 
 
+const EXEC_CLICK_CHANCE: float = 0.04
+const EXEC_CLICK_MULT: float = 8.0
+var last_click_exec: bool = false
+
+
+## Clique manual. 4% de chance de "Clique Executivo" (x8): trabalhou uma vez,
+## chamou de liderança. Dá picos de dopamina sem quebrar a economia (+28% médio).
 func click() -> float:
 	var value := get_click_value()
+	last_click_exec = randf() < EXEC_CLICK_CHANCE
+	if last_click_exec:
+		value *= EXEC_CLICK_MULT
+		unlock_achievement("click_exec")
 	total_clicks += 1
 	earn(value)
 	return value
@@ -465,6 +476,7 @@ func do_prestige() -> Dictionary:
 			bets_unlocked_changed.emit(true)
 
 	Meowzos.forgive_all()
+	Fishing.on_bankruptcy()
 	recalculate()
 
 	unlock_achievement("prestige_1")
@@ -634,6 +646,7 @@ func hard_reset() -> void:
 	_init_upgrades()
 	Meowzos.forgive_all()
 	Meowzos.blacklist_time = 0.0
+	Fishing.from_save({})
 	recalculate()
 	SaveScript.save_game()
 	prestige_changed.emit()

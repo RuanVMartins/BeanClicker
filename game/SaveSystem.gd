@@ -37,6 +37,7 @@ static func save_game() -> bool:
 		"upgrades": [],
 		"achievements": [],
 		"meowzos": _node("Meowzos").to_save(),
+		"fishing": _node("Fishing").to_save(),
 	}
 	for b in gm.buildings:
 		data["buildings"][b["id"]] = int(b["count"])
@@ -107,9 +108,13 @@ static func load_game() -> bool:
 		if gm.achievements.has(str(a)):
 			gm.achievements[str(a)] = true
 
-	var gat = d.get("meowzos", {})
+	var gat = d.get("meowzos", d.get("gatuno", {}))
 	if gat is Dictionary:
 		_node("Meowzos").from_save(gat)
+
+	var fish = d.get("fishing", {})
+	if fish is Dictionary:
+		_node("Fishing").from_save(fish)
 
 	gm.recalculate()
 	return true

@@ -259,6 +259,10 @@ const ACHIEVEMENTS: Dictionary = {
 	"loan_paid": {"name": "Bom Pagador", "desc": "Quitou um empréstimo. O Jeff Meowzos ficou decepcionado."},
 	"loan_default": {"name": "Nome Sujo no SPC Felino", "desc": "Deu calote no Jeff Meowzos. Ele lembra."},
 	"bailout": {"name": "Socorro, Governo!", "desc": "Foi resgatado com dinheiro público."},
+	"fish_first": {"name": "Primeira Fisgada", "desc": "Pescou o primeiro peixe. Agora você é do agronegócio aquático."},
+	"fish_legend": {"name": "Peixe Grande", "desc": "Fisgou um peixe Corporativo. Ele tentou te contratar no barco."},
+	"fish_seller": {"name": "Atravessador", "desc": "Vendeu 50 peixes. O Jeff ficou com 10% de cada um."},
+	"click_exec": {"name": "Clique Executivo", "desc": "Deu um clique executivo (x8). Trabalhou uma vez e chamou de liderança."},
 }
 
 # ══════════════════════════════════════
@@ -295,4 +299,7 @@ const HEADLINES: Array[String] = [
 	"Inflação da ração chega a 40%. Governo recomenda 'comer menos e sorrir mais'.",
 	"Ex-falido abre curso 'Como Falir Rico'. Turma esgota em 3 minutos.",
 	"Robô substitui 300 gatos na fábrica. Bean: 'Nenhum emprego foi perdido, só reposicionado'.",
+	"Jeff Meowzos compra o lago municipal e cobra pedágio dos peixes que entram.",
+	"Sardinha CLT é promovida a Sardinha PJ. Perde o vale-alimentação, ganha 'autonomia'.",
+	"Baleia Bilionária é avistada no Lago da Liquidez. Índice da bolsa oscila 3%.",
 ]

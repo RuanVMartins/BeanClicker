@@ -370,6 +370,42 @@ const LINES: Dictionary = {
 		"Meus estagiários ganham garrafinha pra não perder tempo indo ao banheiro. Sustentabilidade.",
 		"Sabe por que não tenho pelo? Porque cada fio era um custo operacional.",
 		"Pagar imposto é para quem não tem contador criativo.",
+		"Tá parado? Vai pescar no meu lago. Eu cobro, mas é relaxante.",
+	],
+	"fish_open": [
+		"Bem-vindo ao meu lago. A água é grátis. O peixe, a vara e a venda, não.",
+		"Pesque à vontade! Eu fico só com 10% de atravessador. Por peixe. Pra sempre.",
+		"Pescaria é terapia. A minha terapia é cobrar a sua.",
+	],
+	"fish_catch": [
+		"Um {fish}! Vou anotar na sua conta. Digo, no seu currículo.",
+		"{fish} fisgado. Mais um trabalhador do mar que vai virar lucro de terra.",
+		"Bela pescaria. Lembre que a peixaria é minha também.",
+	],
+	"fish_big": [
+		"{fish}?! Esse aí eu queria no meu aquário de escritório.",
+		"Olha o tamanho desse {fish}! Vai pagar umas taxas lindas.",
+	],
+	"fish_legend": [
+		"UM {fish}?! Ele me deve dinheiro! Segura firme que eu cobro na venda!",
+		"{fish} CORPORATIVO! Esse peixe tem mais patrimônio que o lago inteiro!",
+	],
+	"fish_escape": [
+		"Escapou. Igual aos seus direitos trabalhistas.",
+		"O peixe fugiu. Pelo menos não pediu indenização.",
+		"Perdeu o peixe. Mas não perdeu a taxa de uso do lago, que eu já cobrei.",
+	],
+	"fish_sell": [
+		"Venda concluída! Fiquei com {fee} de atravessador. Não fiz nada, por isso cobro.",
+		"{fee} pra mim. É o preço de existir um intermediário entre você e o dinheiro.",
+	],
+	"fish_full": [
+		"Cesta cheia! Venda logo, peixe parado é capital improdutivo.",
+		"Não cabe mais nada na cesta. Igual ao seu cartão de crédito.",
+	],
+	"fish_rod": [
+		"{rod}! Ótima compra. A vara anterior eu revendo como 'seminova'.",
+		"Vara nova, mesmas taxas. Bem-vindo ao upgrade.",
 	],
 	"idle_debt": [
 		"Tô de olho, hein. {debt} não se pagam sozinhos. Na verdade eles crescem sozinhos.",
