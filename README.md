@@ -66,7 +66,7 @@ O projeto ainda não tem testes automatizados (previstos no PGC, seção 5). Hoj
 
 ## Controles
 
-Clique no Grande Bean para produzir moedas e compre estruturas na loja à direita. Num jogo novo, o Jeff Meowzos guia você por um tutorial (dá para pular e rever no Relatório). **ESC** fecha a janela aberta. As estruturas no cenário podem ser arrastadas.
+O jogo abre num menu principal (Jogar/Continuar, Novo jogo, Opções com volume de música e efeitos e tela cheia, Créditos, Sair). Clique no Grande Bean para produzir moedas e compre estruturas na loja à direita. Num jogo novo, o Jeff Meowzos guia você por um tutorial (dá para pular e rever no Relatório). **ESC** fecha a janela aberta; sem janela aberta, abre o menu como pausa (a economia para). As estruturas no cenário podem ser arrastadas.
 
 ## Documentação
 

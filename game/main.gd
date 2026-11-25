@@ -46,6 +46,7 @@ var report_action: Button
 var fishing_action: Button
 var fishing_panel: FishingPanel
 var tutorial: TutorialOverlay
+var title_menu: TitleMenu
 var hud_panel: Control
 var _last_coins: float = 0.0
 var _prestige_glow: Tween
@@ -106,6 +107,7 @@ func _ready() -> void:
 	if not GameManager.pending_offline_report.is_empty():
 		_show_offline_report.call_deferred(GameManager.pending_offline_report)
 		GameManager.pending_offline_report = {}
+	title_menu.open_menu.call_deferred()
 
 
 func _process(delta: float) -> void:
@@ -154,6 +156,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				return
 		if bets_menu.visible:
 			bets_menu.close()
+			return
+		title_menu.open_menu()
 
 
 # ╔══════════════════════════════════════╗
@@ -375,10 +379,21 @@ func _build_modals() -> void:
 	tut_layer.add_child(tutorial)
 	tutorial.finished.connect(func(): _toast("INTEGRAÇÃO CONCLUÍDA", "Você já sabe tudo o que precisa para enriquecer (o Jeff).", UIKit.GOLD))
 	achievements_panel.tutorial_requested.connect(func(): tutorial.restart())
+
+	var menu_layer := CanvasLayer.new()
+	menu_layer.layer = 20
+	menu_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(menu_layer)
+	title_menu = TitleMenu.new()
+	title_menu.theme = UIKit.build_theme()
+	menu_layer.add_child(title_menu)
+	title_menu.new_game_requested.connect(_on_new_game)
 	Fishing.changed.connect(_update_hud_dynamic)
 
 
 func _setup_audio() -> void:
+	for p in [click_sound, buy_sound, prestige_sound]:
+		p.bus = "SFX"
 	click_sound.stream = SFX_CLICK
 	click_sound.volume_db = -10.0
 	click_sound.max_polyphony = 4
@@ -392,6 +407,7 @@ func _setup_audio() -> void:
 	bgm.stream = SFX_BGM
 	bgm.volume_db = -16.0
 	bgm.autoplay = true
+	bgm.bus = "Music"
 	bgm.finished.connect(func(): bgm.play())
 	add_child(bgm)
 
@@ -522,6 +538,16 @@ func _open_casino() -> void:
 	bets_menu.open()
 
 
+## Novo jogo pelo menu: zera tudo e recomeça a integração.
+func _on_new_game() -> void:
+	GameManager.hard_reset()
+	tutorial.restart()
+	_displayed_coins = 0.0
+	_last_coins = 0.0
+	sparkline.reset()
+	_update_hud_static()
+
+
 func _open_fishing() -> void:
 	_hide_meowzos_popup()
 	fishing_panel.open()
@@ -644,6 +670,8 @@ func _hide_meowzos_popup() -> void:
 func _any_modal_open() -> bool:
 	if fishing_panel == null:
 		return false
+	if title_menu and title_menu.is_open():
+		return true
 	return prestige_screen.is_open() or loan_office.is_open() or achievements_panel.is_open() or fishing_panel.is_open()
 
 

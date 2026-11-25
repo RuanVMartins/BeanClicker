@@ -115,7 +115,7 @@ func _notification(what: int) -> void:
 
 
 func _process(delta: float) -> void:
-	if not _booted:
+	if not _booted or get_tree().paused:
 		return
 	play_time += delta
 	if bailout_timer > 0.0:
