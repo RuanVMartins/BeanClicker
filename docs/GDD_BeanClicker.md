@@ -1,5 +1,5 @@
 # 🐾 GAME DESIGN DOCUMENT (GDD) — BEANCLICKER
-**Versão do Documento:** 3.1 (Cassino do Jeff Meowzos, Falência Declarada & Pesque-Pague)
+**Versão do Documento:** 3.2 (Entrega final: Cassino do Jeff Meowzos, Falência Declarada, Pesque-Pague, tutorial e menu)
 **Engine:** Godot Engine 4.7 (GDScript 2.0)
 **Gênero:** *Incremental Clicker* / Simulação Econômica Satírica com Mini-Jogos de Apostas
 **Plataforma:** PC / Desktop (Windows, macOS, Linux)
@@ -14,7 +14,7 @@
 | Atributo | Detalhes |
 | :--- | :--- |
 | **Título Oficial** | **BeanClicker** |
-| **Versão** | **2.1** (executável) / GDD 3.1 |
+| **Versão** | **2.1** (executável) / GDD 3.2 |
 | **Equipe** | **Abner, Athos, Lucas Scheibe, Raoni, Ruan Vitor, Vitor Kill** |
 | **Gênero** | Idle / Incremental Clicker com Mini-Jogos de Cassino |
 | **Motor de Jogo** | Godot Engine 4.7 (Forward Plus / GDScript 2.0) |
@@ -271,6 +271,7 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 
 * **Renda offline:** 25% da produção do período ausente (até 2 h), ou 75% até 8 h com Paraíso Fiscal. Relatório de ausência com a "taxa de administração" do Meowzos.
 * **Save:** JSON versionado (v3), autosave a cada 30 s e ao fechar, migração automática de saves v2 (Grãos Celestiais viram Fundos Offshore).
+* **Menu principal:** o jogo abre numa tela de título com Jogar/Continuar, Novo jogo (pede confirmação e apaga o save), Opções (volume da música, volume dos efeitos e tela cheia, salvos em `settings.cfg`), Créditos com a equipe e Sair. Durante a partida, ESC abre o mesmo menu como pausa: a economia e os juros do Jeff param enquanto ele está aberto.
 * **Tutorial — "Integração de Novos Colaboradores":** o Jeff Meowzos guia o jogador novo em 9 passos: clicar no Bean, contratar o primeiro Mini Bean, comprar uma melhoria, entender a renda passiva, comprar um Fazendeiro, pescar, abrir o cassino (só aparece com 1.000 moedas), conhecer o crédito e, quando der, falir. Cada passo destaca o botão certo com uma moldura dourada e uma seta, e avança sozinho quando a ação é feita. O tutorial pode ser pulado e revisto pelo Relatório ("Rever integração"). O progresso fica no save, e saves antigos de quem já jogou não forçam o tutorial.
 * **Conquistas:** 34, cada uma +1% de produção. Exemplos: *Nome Sujo no SPC Felino*, *Zebra na Pista*, *Imposto do Otimismo*, *Tudo ou Nada (Nada)*, *Peixe Grande*, *Atravessador*, *Clique Executivo*.
 * **Entidades visuais:** até 12 bonecos por estrutura (60 no total), arrastáveis, com animação própria; somem com um "puf" quando penhorados.
@@ -284,7 +285,28 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 
 ---
 
-## 13. REGISTROS VISUAIS
+## 13. AJUSTES DA ENTREGA FINAL
+
+### 13.1. Devolutiva da professora: "deixar a HUD mais bonita"
+**Antes (versão 2.0):** o saldo era um número solto no canto superior esquerdo, com a linha "renda passiva: 14/s" logo abaixo, sobre o céu do cenário. A loja e o cassino usavam caixas arredondadas genéricas, todas com o mesmo peso visual. Não havia indicação de quanto faltava para a próxima compra nem destaque para o que dava para comprar.
+
+**Depois (versão 2.1):** a interface ganhou uma identidade própria, que mistura terminal de bolsa com máquina de cassino (detalhada na seção 3):
+* **HUD de cotação:** o saldo virou uma "ação" (BNC · Bean Coin) num painel de LCD, em âmbar e fonte monoespaçada, com indicador "ao vivo", renda por segundo, valor do clique, variação % do último minuto e um mini-gráfico (sparkline) verde/vermelho.
+* **Hierarquia clara:** o saldo é o maior elemento da tela; renda, clique e cargo ficam numa segunda linha menor.
+* **Loja legível:** cada estrutura mostra o preço em "BNC", a produção como "DIV", a quantidade e uma barra de quanto falta para comprar. O card brilha quando fica comprável e as melhorias novas piscam ao serem liberadas.
+* **Botões físicos:** teclas com profundidade que afundam ao clicar, molduras art déco e um letreiro de lâmpadas no cassino.
+* **Feedback:** o saldo sobe animado e pulsa em ganhos grandes; o clique solta moedas e o "Clique Executivo" ganha um destaque laranja.
+
+**Impacto para quem joga:** a informação mais importante (quanto tenho e quanto ganho) é lida num relance; o jogador sabe o que pode comprar sem abrir nada; e a interface reforça o tema do jogo em vez de parecer um modelo genérico.
+
+### 13.2. Outros ajustes para a versão final
+* **Onboarding:** tutorial guiado pelo Jeff Meowzos (seção 12) e menu principal, para quem joga pela primeira vez entender os controles e o que fazer.
+* **Correções:** cassino que não desbloqueava com 1.000 moedas e melhorias que só apareciam depois da primeira Falência (seção 12.1).
+* **Conteúdo:** Pesque-Pague do Jeff (seção 11), para dar um jogo ativo que continua útil no late game.
+
+---
+
+## 14. REGISTROS VISUAIS
 
 ![Tela principal](screenshots/screenshot_main.png)
 *Figura 1 — Tela principal: HUD de cotação, Grande Bean, estruturas no cenário, Jeff Meowzos ambulante, Jornal do Capital, barra de ações (com Pescaria) e Mercado de Ativos.*
@@ -319,9 +341,12 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 ![Tutorial](screenshots/screenshot_tutorial.png)
 *Figura 11 — Integração de Novos Colaboradores: o Jeff Meowzos pede o primeiro Mini Bean, com o card destacado na loja.*
 
+![Menu principal](screenshots/screenshot_menu.png)
+*Figura 12 — Menu principal: Jogar/Continuar, Novo jogo, Opções (volumes e tela cheia), Créditos e Sair.*
+
 ---
 
-## 14. ARQUITETURA DE SOFTWARE
+## 15. ARQUITETURA DE SOFTWARE
 
 | Arquivo | Tipo | Responsabilidade |
 | :--- | :--- | :--- |
@@ -336,6 +361,7 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 | `ui/PrestigeScreen.gd` | `Control` | Falência Declarada e Benefícios Executivos |
 | `ui/LoanOffice.gd` | `Control` | Escritório de Crédito |
 | `ui/AchievementsPanel.gd` | `Control` | Conquistas e "Relatório aos Acionistas" |
+| `ui/TitleMenu.gd` | `Control` | Menu principal e de pausa, opções de áudio/tela e créditos |
 | `ui/TutorialOverlay.gd` | `Control` | Tutorial guiado: passos, destaque do alvo, pular e rever |
 | `ui/FishingPanel.gd` | `Control` | Interface da pescaria: lago desenhado em código, barra de tensão, cesta e varas |
 | `ui/Sparkline.gd`, `ui/Marquee.gd` | `Control` | Gráfico de cotação e letreiro de lâmpadas |
@@ -347,9 +373,9 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 
 ---
 
-## 15. EQUIPE & CONSIDERAÇÕES EXTENSIONISTAS
+## 16. EQUIPE & CONSIDERAÇÕES EXTENSIONISTAS
 
-### 15.1. Integrantes
+### 16.1. Integrantes
 | Integrante | Atuação |
 | :--- | :--- |
 | **Abner** | Game Design, Balanceamento Numérico e Estruturas de Produção |
@@ -359,8 +385,8 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 | **Ruan Vitor** | Arte Digital, Sprites, Animações de Tween e Partículas |
 | **Vitor Kill** | Áudio/SFX, Documentação Técnica (GDD) e QA |
 
-### 15.2. Impacto Extensionista (PAC)
+### 16.2. Impacto Extensionista (PAC)
 *BeanClicker* contrasta a progressão estável da renda passiva com a volatilidade dos jogos de azar e com o custo real do crédito fácil. O jogo mostra abertamente o RTP de cada jogo, o RTP pessoal do jogador e quanto um empréstimo custa no fim do prazo. O humor torna visíveis mecanismos reais da indústria de apostas: o near-miss da raspadinha, o "reforço intermitente" das vitórias pequenas e a falácia do apostador.
 
 ---
-*Documento atualizado para a versão 2.1 do BeanClicker.*
+*Documento atualizado para a versão 2.1 do BeanClicker (entrega final).*

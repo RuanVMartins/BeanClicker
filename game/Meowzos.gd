@@ -60,6 +60,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if get_tree().paused:
+		return
 	if blacklist_time > 0.0:
 		blacklist_time = maxf(0.0, blacklist_time - delta)
 	if not loan_active:
