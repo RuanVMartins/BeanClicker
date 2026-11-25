@@ -73,7 +73,7 @@ func _ready() -> void:
 
 
 func _on_loan_changed() -> void:
-	if _overlay.visible:
+	if _is_open:
 		_refresh()
 
 
@@ -101,11 +101,29 @@ func _create_offer_row(index: int) -> PanelContainer:
 	return row
 
 
+# Fechar e reabrir rápido não pode deixar o tween de fechar esconder a janela reaberta
+var _is_open: bool = false
+var _fade: Tween
+
+
+func _fade_to(alpha: float, time: float, hide_after: bool) -> void:
+	if _fade and _fade.is_valid():
+		_fade.kill()
+	_fade = create_tween()
+	_fade.tween_property(_overlay, "modulate:a", alpha, time)
+	if hide_after:
+		_fade.tween_callback(func():
+			if not _is_open:
+				_overlay.visible = false)
+
+
 func open() -> void:
 	_refresh()
+	_is_open = true
 	_overlay.visible = true
-	_overlay.modulate.a = 0.0
-	create_tween().tween_property(_overlay, "modulate:a", 1.0, 0.2)
+	if _overlay.modulate.a > 0.99:
+		_overlay.modulate.a = 0.0
+	_fade_to(1.0, 0.2, false)
 	if Meowzos.loan_active:
 		_bubble.speak(Meowzos.line("idle_debt", {"debt": NumberFormatter.format_number(Meowzos.loan_debt)}), "neutral")
 	elif Meowzos.blacklist_time > 0.0:
@@ -115,18 +133,17 @@ func open() -> void:
 
 
 func close_screen() -> void:
-	var tw := create_tween()
-	tw.tween_property(_overlay, "modulate:a", 0.0, 0.15)
-	tw.tween_callback(func(): _overlay.visible = false)
+	_is_open = false
+	_fade_to(0.0, 0.15, true)
 
 
 func is_open() -> bool:
-	return _overlay.visible
+	return _is_open
 
 
 var _accum: float = 0.0
 func _process(delta: float) -> void:
-	if not _overlay.visible:
+	if not _is_open:
 		return
 	_accum += delta
 	if _accum >= 0.25:
