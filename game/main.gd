@@ -132,7 +132,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and not _any_modal_open() and not bets_menu.visible:
 		match event.keycode:
 			KEY_C:
-				_open_casino()
+				# Atalho só abre; desbloquear (gastar 1.000) exige clicar no botão
+				if GameManager.bets_unlocked:
+					_open_casino()
+				else:
+					UIKit.flash(casino_action, Color(1.6, 1.3, 0.7), 0.5)
 			KEY_P:
 				_open_fishing()
 			KEY_E:

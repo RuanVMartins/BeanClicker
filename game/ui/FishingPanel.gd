@@ -381,10 +381,28 @@ func _ready() -> void:
 # ABRIR / FECHAR
 # ══════════════════════════════════════
 
+# Fechar e reabrir rápido não pode deixar o tween de fechar esconder a janela reaberta
+var _is_open: bool = false
+var _fade: Tween
+
+
+func _fade_to(alpha: float, time: float, hide_after: bool) -> void:
+	if _fade and _fade.is_valid():
+		_fade.kill()
+	_fade = create_tween()
+	_fade.tween_property(_overlay, "modulate:a", alpha, time)
+	if hide_after:
+		_fade.tween_callback(func():
+			if not _is_open:
+				_overlay.visible = false)
+
+
 func open() -> void:
+	_is_open = true
 	_overlay.visible = true
-	_overlay.modulate.a = 0.0
-	create_tween().tween_property(_overlay, "modulate:a", 1.0, 0.2)
+	if _overlay.modulate.a > 0.99:
+		_overlay.modulate.a = 0.0
+	_fade_to(1.0, 0.2, false)
 	_refresh_side()
 	if Fishing.cooler_full():
 		Meowzos.say_key("fish_full", {}, "smug")
@@ -397,13 +415,12 @@ func close_screen() -> void:
 		Meowzos.say("Vai largar o peixe no meio da negociação? Que falta de profissionalismo.", "angry")
 		return
 	_reset_line()
-	var tw := create_tween()
-	tw.tween_property(_overlay, "modulate:a", 0.0, 0.15)
-	tw.tween_callback(func(): _overlay.visible = false)
+	_is_open = false
+	_fade_to(0.0, 0.15, true)
 
 
 func is_open() -> bool:
-	return _overlay.visible
+	return _is_open
 
 
 func _unhandled_input(event: InputEvent) -> void:
