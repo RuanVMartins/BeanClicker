@@ -45,6 +45,8 @@ var prestige_action: Button
 var report_action: Button
 var fishing_action: Button
 var fishing_panel: FishingPanel
+var tutorial: TutorialOverlay
+var hud_panel: Control
 var _last_coins: float = 0.0
 var _prestige_glow: Tween
 
@@ -193,6 +195,7 @@ func _build_play_area() -> void:
 	hud.custom_minimum_size = Vector2(300, 0)
 	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	play_area.add_child(hud)
+	hud_panel = hud
 	var hv := UIKit.vbox(3)
 	hud.add_child(hv)
 
@@ -361,6 +364,17 @@ func _build_modals() -> void:
 	fishing_panel = FishingPanel.new()
 	modal_layer.add_child(fishing_panel)
 	fishing_panel.sfx.connect(_on_casino_sfx)
+
+	# Tutorial numa camada própria: acima da tela principal, abaixo do cassino e das janelas
+	var tut_layer := CanvasLayer.new()
+	tut_layer.layer = 4
+	add_child(tut_layer)
+	tutorial = TutorialOverlay.new()
+	tutorial.main = self
+	tutorial.theme = UIKit.build_theme()
+	tut_layer.add_child(tutorial)
+	tutorial.finished.connect(func(): _toast("INTEGRAÇÃO CONCLUÍDA", "Você já sabe tudo o que precisa para enriquecer (o Jeff).", UIKit.GOLD))
+	achievements_panel.tutorial_requested.connect(func(): tutorial.restart())
 	Fishing.changed.connect(_update_hud_dynamic)
 
 
@@ -590,7 +604,7 @@ func _tick_meowzos(delta: float) -> void:
 		if _meowzos_hide_timer <= 0.0:
 			_hide_meowzos_popup()
 		return
-	if bets_menu.visible or _any_modal_open():
+	if bets_menu.visible or _any_modal_open() or (tutorial and tutorial.is_showing()):
 		return
 	_meowzos_timer -= delta
 	if _meowzos_timer <= 0.0:
@@ -600,6 +614,8 @@ func _tick_meowzos(delta: float) -> void:
 func _on_meowzos_said(text: String, mood: String) -> void:
 	# Dentro do cassino ou do escritório, ele já tem palco próprio
 	if bets_menu.visible or loan_office.is_open() or (fishing_panel and fishing_panel.is_open()):
+		return
+	if tutorial and tutorial.is_showing():
 		return
 	_show_meowzos_popup(text, mood)
 

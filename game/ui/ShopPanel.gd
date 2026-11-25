@@ -104,6 +104,19 @@ func _process(delta: float) -> void:
 		refresh(false)
 
 
+# ── Pontos de ancoragem para o tutorial ──
+func get_building_button(index: int) -> Control:
+	return _building_cards[index]["btn"] if index < _building_cards.size() else null
+
+
+func get_upgrade_grid() -> Control:
+	return _upgrade_grid
+
+
+func has_visible_upgrades() -> bool:
+	return not _upgrade_buttons.is_empty()
+
+
 func _tex(path: String) -> Texture2D:
 	if not _texture_cache.has(path):
 		_texture_cache[path] = load(path) if ResourceLoader.exists(path) else null

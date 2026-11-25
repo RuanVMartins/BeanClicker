@@ -271,7 +271,8 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 
 * **Renda offline:** 25% da produção do período ausente (até 2 h), ou 75% até 8 h com Paraíso Fiscal. Relatório de ausência com a "taxa de administração" do Meowzos.
 * **Save:** JSON versionado (v3), autosave a cada 30 s e ao fechar, migração automática de saves v2 (Grãos Celestiais viram Fundos Offshore).
-* **Conquistas:** 33, cada uma +1% de produção. Exemplos: *Nome Sujo no SPC Felino*, *Zebra na Pista*, *Imposto do Otimismo*, *Tudo ou Nada (Nada)*, *Peixe Grande*, *Atravessador*, *Clique Executivo*.
+* **Tutorial — "Integração de Novos Colaboradores":** o Jeff Meowzos guia o jogador novo em 9 passos: clicar no Bean, contratar o primeiro Mini Bean, comprar uma melhoria, entender a renda passiva, comprar um Fazendeiro, pescar, abrir o cassino (só aparece com 1.000 moedas), conhecer o crédito e, quando der, falir. Cada passo destaca o botão certo com uma moldura dourada e uma seta, e avança sozinho quando a ação é feita. O tutorial pode ser pulado e revisto pelo Relatório ("Rever integração"). O progresso fica no save, e saves antigos de quem já jogou não forçam o tutorial.
+* **Conquistas:** 34, cada uma +1% de produção. Exemplos: *Nome Sujo no SPC Felino*, *Zebra na Pista*, *Imposto do Otimismo*, *Tudo ou Nada (Nada)*, *Peixe Grande*, *Atravessador*, *Clique Executivo*.
 * **Entidades visuais:** até 12 bonecos por estrutura (60 no total), arrastáveis, com animação própria; somem com um "puf" quando penhorados.
 * **Atalhos:** C = cassino, P = pescaria, E = crédito, F = falência, R = relatório, ESPAÇO = ação da pescaria, ESC = fecha a janela aberta.
 * **Feedback:** o saldo pulsa em ganhos grandes, cards da loja brilham quando ficam compráveis e melhorias novas piscam ao serem liberadas.
@@ -315,6 +316,9 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 ![Pesque-Pague do Jeff](screenshots/screenshot_pescaria.png)
 *Figura 10 — Pesque-Pague do Jeff: peixe Épico na barra de tensão, cesta com peixes de todas as raridades e a Cotação do Pescado.*
 
+![Tutorial](screenshots/screenshot_tutorial.png)
+*Figura 11 — Integração de Novos Colaboradores: o Jeff Meowzos pede o primeiro Mini Bean, com o card destacado na loja.*
+
 ---
 
 ## 14. ARQUITETURA DE SOFTWARE
@@ -332,6 +336,7 @@ O lago tem céu noturno, skyline de cassinos e o Grande Bean pescando no píer. 
 | `ui/PrestigeScreen.gd` | `Control` | Falência Declarada e Benefícios Executivos |
 | `ui/LoanOffice.gd` | `Control` | Escritório de Crédito |
 | `ui/AchievementsPanel.gd` | `Control` | Conquistas e "Relatório aos Acionistas" |
+| `ui/TutorialOverlay.gd` | `Control` | Tutorial guiado: passos, destaque do alvo, pular e rever |
 | `ui/FishingPanel.gd` | `Control` | Interface da pescaria: lago desenhado em código, barra de tensão, cesta e varas |
 | `ui/Sparkline.gd`, `ui/Marquee.gd` | `Control` | Gráfico de cotação e letreiro de lâmpadas |
 | `ui/NewsTicker.gd`, `ui/MeowzosBubble.gd` | `Control` | Jornal do Capital e balão do Meowzos |

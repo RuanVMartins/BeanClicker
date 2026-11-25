@@ -33,6 +33,8 @@ static func save_game() -> bool:
 		"bailout_timer": gm.bailout_timer,
 		"total_clicks": gm.total_clicks,
 		"play_time": gm.play_time,
+		"tutorial_step": gm.tutorial_step,
+		"tutorial_done": gm.tutorial_done,
 		"buildings": {},
 		"upgrades": [],
 		"achievements": [],
@@ -91,6 +93,9 @@ static func load_game() -> bool:
 	gm.total_clicks = int(d.get("total_clicks", 0))
 	gm.play_time = float(d.get("play_time", 0.0))
 	gm.last_save_unix = float(d.get("saved_at", 0.0))
+	gm.tutorial_step = int(d.get("tutorial_step", 0))
+	# Saves de antes do tutorial: quem já jogou um pouco não é obrigado a refazer o básico
+	gm.tutorial_done = bool(d.get("tutorial_done", gm.lifetime_earned > 5000.0))
 
 	gm.perks.clear()
 	for p in d.get("perks", []):

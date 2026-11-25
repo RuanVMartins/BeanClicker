@@ -259,6 +259,7 @@ const ACHIEVEMENTS: Dictionary = {
 	"loan_paid": {"name": "Bom Pagador", "desc": "Quitou um empréstimo. O Jeff Meowzos ficou decepcionado."},
 	"loan_default": {"name": "Nome Sujo no SPC Felino", "desc": "Deu calote no Jeff Meowzos. Ele lembra."},
 	"bailout": {"name": "Socorro, Governo!", "desc": "Foi resgatado com dinheiro público."},
+	"tutorial_done": {"name": "Colaborador Integrado", "desc": "Concluiu a integração. Agora sabe exatamente como ser explorado."},
 	"fish_first": {"name": "Primeira Fisgada", "desc": "Pescou o primeiro peixe. Agora você é do agronegócio aquático."},
 	"fish_legend": {"name": "Peixe Grande", "desc": "Fisgou um peixe Corporativo. Ele tentou te contratar no barco."},
 	"fish_seller": {"name": "Atravessador", "desc": "Vendeu 50 peixes. O Jeff ficou com 10% de cada um."},

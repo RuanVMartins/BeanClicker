@@ -7,6 +7,8 @@ var _grid: GridContainer
 var _stats: VBoxContainer
 var _header: Label
 
+signal tutorial_requested
+
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -21,6 +23,12 @@ func _ready() -> void:
 	root.add_child(head)
 	head.add_child(UIKit.title("RELATÓRIO AOS ACIONISTAS", 24, UIKit.GOLD))
 	head.add_child(UIKit.spacer())
+	var replay := UIKit.button("REVER INTEGRAÇÃO", "ghost", 12, Vector2(0, 32))
+	replay.tooltip_text = "Recomeça o tutorial do Jeff Meowzos."
+	replay.pressed.connect(func():
+		_overlay.visible = false
+		tutorial_requested.emit())
+	head.add_child(replay)
 	var close := UIKit.button("✕", "ghost", 16, Vector2(36, 32))
 	close.pressed.connect(func(): _overlay.visible = false)
 	head.add_child(close)

@@ -74,6 +74,10 @@ var total_clicks: int = 0
 var play_time: float = 0.0
 var last_save_unix: float = 0.0
 
+# Tutorial ("Integração de novos colaboradores")
+var tutorial_step: int = 0
+var tutorial_done: bool = false
+
 # Relatório de renda offline pendente (a UI consome e zera)
 var pending_offline_report: Dictionary = {}
 
@@ -642,6 +646,8 @@ func hard_reset() -> void:
 	bets_highest_win = 0.0
 	total_clicks = 0
 	play_time = 0.0
+	tutorial_step = 0
+	tutorial_done = false
 	_init_buildings()
 	_init_upgrades()
 	Meowzos.forgive_all()
